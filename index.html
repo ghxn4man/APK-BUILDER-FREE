@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VictoryX APK Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="brand">VictoryX <span>APK Builder</span></div><div class="badge">GitHub Actions</div></header>
+<main>
+  <section class="hero"><h1>Build Android apps from your project ZIP.</h1><p>Upload a real Android Studio project, customise supported settings, and build it remotely with GitHub Actions.</p></section>
+  <form id="buildForm">
+    <section class="card"><h2>PROJECT</h2>
+      <label>Android Studio Project ZIP<input id="project" type="file" accept=".zip" required></label>
+      <div class="grid">
+        <label>App Name<input id="appName" value="VictoryX App" required></label>
+        <label>Package Name<input id="packageName" value="com.victoryx.app" required></label>
+        <label>Version Name<input id="versionName" value="1.0" required></label>
+        <label>Version Code<input id="versionCode" type="number" min="1" value="1" required></label>
+      </div>
+    </section>
+    <section class="card"><h2>BRANDING</h2>
+      <div class="grid">
+        <label>App Icon<input id="icon" type="file" accept="image/png,image/jpeg,image/webp"></label>
+        <label>Splash Logo<input id="splashLogo" type="file" accept="image/png,image/jpeg,image/webp"></label>
+        <label>Icon Scale<input id="iconScale" type="range" min="50" max="100" value="85"></label>
+        <label>Icon Padding<input id="iconPadding" type="range" min="0" max="40" value="8"></label>
+        <label>Background Color<input id="backgroundColor" type="color" value="#111827"></label>
+        <label>Primary Color<input id="primaryColor" type="color" value="#7c3aed"></label>
+        <label>Secondary Color<input id="secondaryColor" type="color" value="#06b6d4"></label>
+        <label>Theme<select id="theme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        <label>Orientation<select id="orientation"><option value="unspecified">Unspecified</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>
+      </div>
+    </section>
+    <section class="card"><h2>PERMISSIONS</h2><div class="checks">
+      <label><input type="checkbox" value="android.permission.INTERNET" checked> Internet</label>
+      <label><input type="checkbox" value="android.permission.POST_NOTIFICATIONS"> Notifications</label>
+      <label><input type="checkbox" value="android.permission.SYSTEM_ALERT_WINDOW"> Display over other apps</label>
+      <label><input type="checkbox" value="android.permission.VIBRATE"> Vibrate</label>
+      <label><input type="checkbox" value="android.permission.WAKE_LOCK"> Wake lock</label>
+    </div></section>
+    <section class="card"><h2>BUILD SETTINGS</h2>
+      <label>APK Type<select id="buildType"><option value="debug">Debug APK</option><option value="release">Release APK</option></select></label>
+      <button id="buildBtn" type="submit">🚀 BUILD APK</button>
+      <button id="resetBtn" type="button" class="secondary">Reset</button>
+    </section>
+  </form>
+  <section id="result" class="card hidden"><h2 id="statusTitle">BUILD</h2><p id="status"></p><pre id="logs"></pre><a id="download" class="button hidden" target="_blank">DOWNLOAD APK</a></section>
+</main>
+<script src="script.js"></script>
+</body></html>

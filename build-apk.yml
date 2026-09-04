@@ -1,0 +1,57 @@
+name: Build APK
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}
+      - name: Locate build input
+        env:
+          BUILD_ID: ${{ inputs.build_id }}
+        run: |
+          echo "This workflow expects the backend to make the uploaded project/config available to the runner."
+          echo "For a production deployment, use private object storage or an authenticated upload endpoint."
+          test -d ".builds/$BUILD_ID" || { echo "Build input not present in repository workspace."; exit 1; }
+      - name: Customize project
+        env: {BUILD_ID: ${{ inputs.build_id }}}
+        run: |
+          python builder/modify-project.py ".builds/$BUILD_ID/project.zip" ".builds/$BUILD_ID/work" ".builds/$BUILD_ID/config.json"
+      - name: Detect Gradle wrapper
+        run: |
+          test -f ".builds/${{ inputs.build_id }}/work/gradlew" || find ".builds/${{ inputs.build_id }}/work" -name gradlew -print -quit > /tmp/gradlew_path
+          W=$(find ".builds/${{ inputs.build_id }}/work" -name gradlew -print -quit)
+          test -n "$W" || { echo "Gradle wrapper not found."; exit 1; }
+          chmod +x "$W"; echo "GRADLEW=$W" >> "$GITHUB_ENV"
+      - name: Build APK
+        env:
+          BUILD_ID: ${{ inputs.build_id }}
+          BUILD_TYPE: debug
+        run: |
+          cd "$(dirname "$GRADLEW")"
+          if [ "${BUILD_TYPE}" = "release" ]; then
+            ./gradlew assembleRelease --no-daemon
+          else
+            ./gradlew assembleDebug --no-daemon
+          fi
+      - name: Collect APK
+        env: {BUILD_ID: ${{ inputs.build_id }}}
+        run: |
+          mkdir -p ".builds/$BUILD_ID/output"
+          find ".builds/$BUILD_ID/work" -type f -name "*.apk" -exec cp {} ".builds/$BUILD_ID/output/" \;
+          ls -lah ".builds/$BUILD_ID/output"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: victoryx-apk-${{ inputs.build_id }}
+          path: .builds/${{ inputs.build_id }}/output/*.apk

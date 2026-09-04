@@ -1,0 +1,6 @@
+{
+  "appName":"VictoryX App","packageName":"com.victoryx.app","versionName":"1.0","versionCode":1,
+  "iconScale":85,"iconPadding":8,"backgroundColor":"#111827","primaryColor":"#7c3aed",
+  "secondaryColor":"#06b6d4","theme":"dark","orientation":"unspecified",
+  "permissions":["android.permission.INTERNET"],"buildType":"debug"
+}
